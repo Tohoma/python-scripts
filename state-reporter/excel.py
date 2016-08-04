@@ -156,7 +156,6 @@ for line in file:
                 #print(counter)
                 counter += 1
     print("-------------------------------")
-    print("1099 June 2016")
     
 
 
