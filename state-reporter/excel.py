@@ -2,11 +2,11 @@ import openpyxl
 import re
 
 
-wb =  openpyxl.load_workbook('2016_1099.xlsx')
+masterList =  openpyxl.load_workbook('2016_1099.xlsx')
 wbSave = openpyxl.Workbook()
 wbSave.get_sheet_names()
 outputSheet = wbSave.active
-sheet = wb.get_sheet_by_name('Sheet1')
+sheet = masterList.get_sheet_by_name('Sheet1')
 file = open("JUL2017.txt","r")
 output = open("newpeople.txt","w")
 pagebegin = re.compile("LMAP7LST")
@@ -26,26 +26,23 @@ streetNameRegex = re.compile("([a-zA-Z]\s?\.?\s?)+\d*")
 ssnList = []
 item = 0
 
+#Method checks to see if we are at the top of the page and skips it.
 def pageCheck(file,line):
     while space.match(line):
         line = file.next()
-    #print("The line passed into page check is " + line)
     pagebeginstr = pagebegin.search(line)
     if pagebeginstr:
         print("New Page!")
         for i in range(7):
             line = file.next()
         while space.match(line) or attnaddress.match(line):
-            print(line)
             line = file.next()
-        print("The line being passed out is " + line)
         return line
     else: return line
 
 
 for ssn in sheet.columns[3]:
     ssnList.append(ssn.value)
-    print (ssn.value)
 
 
 
@@ -54,9 +51,8 @@ for line in file:
     while space.match(line):
         line = file.next()
     line = pageCheck(file,line)
-    #Name validation
     name = line
-    print("The name is " + name)
+    print(name)
     line = pageCheck(file,line)
     ssnLine = file.next()
     ssnLine = pageCheck(file,ssnLine)
@@ -91,11 +87,8 @@ for line in file:
             personState = "Regex error"
         print("CITY: "+('').join(foundCityGroup[0]))
         print("STATE: "+('').join(foundCityGroup[1]))
-        print("The line is " + line)
-    print("The line being passed to zipcode is " + line) 
+        print("The line is " + line) 
     foundZipcode = zipcode.findall(line)
-    print("The regex object should be below")
-    #print(foundZipcode)
     if foundZipcode[1]:
         personZipcode = foundZipcode[1][0]
         print("ZIPCODE: "+personZipcode)
@@ -114,8 +107,6 @@ for line in file:
             change = cashCheck[0][3].replace('.','')
         else:
             change = "00"
-        print("The change is " + change)
-        print(cashTotal)
     else:
         cashTotal = "Regex error"
    
