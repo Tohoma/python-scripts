@@ -1,0 +1,1 @@
+A simple python script that copies all sheets in an excel file and combines it into one excel file.
