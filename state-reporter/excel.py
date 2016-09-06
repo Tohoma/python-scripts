@@ -4,7 +4,6 @@ import re
 
 masterList =  openpyxl.load_workbook('2016_1099.xlsx')
 wbSave = openpyxl.Workbook()
-wbSave.get_sheet_names()
 outputSheet = wbSave.active
 sheet = masterList.get_sheet_by_name('Sheet1')
 output = open("newpeople.txt","w")
