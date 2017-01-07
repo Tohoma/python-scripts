@@ -1,12 +1,7 @@
 import openpyxl
 import re
+import sys
 
-
-masterList =  openpyxl.load_workbook('2016_1099.xlsx')
-wbSave = openpyxl.Workbook()
-outputSheet = wbSave.active
-sheet = masterList.get_sheet_by_name('Sheet1')
-output = open("newpeople.txt","w")
 pagebegin = re.compile("LMAP7LST")
 SSN = re.compile("(\d{3}-\d{2}-\d{4})")
 address = re.compile("\d+\s([a-zA-Z]\s?\.?\s?)+\d*")
@@ -21,7 +16,7 @@ cash = re.compile("([0-9]{1,3}((\,[0-9]{3})+)?(\.[0-9]{1,2})?)")
 space = re.compile("^\s*$")
 ADR = re.compile("(\d*)")
 streetNameRegex = re.compile("([a-zA-Z]\s?\.?\s?)+\d*")
-ssnList = []
+
 
 
 #Method checks to see if we are at the top of the page and skips it.
@@ -39,14 +34,23 @@ def pageCheck(file,line):
     else: return line
 
 
-for ssn in sheet.columns[3]:
-    ssnList.append(ssn.value)
 
 
-def main():
-    fileName = raw_input('What is the name of the list of appproved invoices? ')
-    file = open(fileName,"r")
+def generate_ssnList(sheet):
+    ssnList = []
+    for ssn in sheet.columns[3]:
+        ssnList.append(ssn.value)
+    return ssnList
+
+def main(file_name):
+    masterList =  openpyxl.load_workbook('2016_1099.xlsx')
+    wbSave = openpyxl.Workbook()
+    outputSheet = wbSave.active
+    sheet = masterList.get_sheet_by_name('Sheet1')
+    output = open("newpeople.txt","w")
+    file = open(file_name,"r")
     item = 0
+    ssnList = generate_ssnList(sheet)
     for line in file:
         #Skip white space
         while space.match(line):
@@ -148,13 +152,12 @@ def main():
                     #print(counter)
                     counter += 1
         print("-------------------------------")
+    wbSave.save("export.xlsx")
+    output.close()
+    print("Done")
+if __name__ == "__main__":
+    main(sys.argv[1])
     
-
-main()
-wbSave.save("export.xlsx")
-output.close()
-
-print("Done")
 
 
 
